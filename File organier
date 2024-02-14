@@ -1,0 +1,53 @@
+import os
+import shutil
+import logging
+
+def organize_files(folder_path):
+    file_types = {
+        "Images": [".jpg", ".jpeg", ".png", ".gif"],
+        "Documents": [".doc", ".docx", ".pdf", ".txt"],
+        "Videos": [".mp4", ".avi", ".mkv", ".mov"],
+        "Music": [".mp3", ".wav", ".flac"],
+        "Others": []
+    }
+
+    for folder_name in file_types.keys():
+        folder_dir = os.path.join(folder_path, folder_name)
+        if not os.path.exists(folder_dir):
+            os.makedirs(folder_dir)
+
+    files_moved_count = {category: 0 for category in file_types.keys()}
+
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        if os.path.isfile(file_path):
+            _, file_extension = os.path.splitext(filename)
+            file_extension = file_extension.lower()
+
+            destination_folder = "Others"
+            for folder_name, extensions in file_types.items():
+                if file_extension in extensions:
+                    destination_folder = folder_name
+                    break
+
+            destination_path = os.path.join(folder_path, destination_folder, filename)
+            try:
+                shutil.move(file_path, destination_path)
+                files_moved_count[destination_folder] += 1
+                logging.info(f"Moved {filename} to {destination_folder} folder.")
+            except Exception as e:
+                logging.error(f"Error moving {filename}: {e}")
+
+    # Display file count summary
+    for category, count in files_moved_count.items():
+        print(f"{count} files moved to {category} folder.")
+
+if __name__ == "__main__":
+    logging.basicConfig(filename='file_organizer.log', level=logging.INFO)
+    
+    folder_to_organize = input("Enter the path of the folder to be organized: ")
+    
+    if os.path.exists(folder_to_organize):
+        organize_files(folder_to_organize)
+    else:
+        print("Invalid folder path. Please provide a valid path.")
