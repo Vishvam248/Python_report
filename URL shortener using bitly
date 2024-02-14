@@ -1,0 +1,21 @@
+
+import pyshorteners
+
+def shorten_url_with_bitly(original_url, bitly_token):
+    """
+    Shorten a URL using Bitly services.
+
+    Parameters:
+    - original_url (str): The original URL to be shortened.
+    - bitly_token (str): Your Bitly access token.
+
+    Returns:
+    - str: The shortened URL.
+    """
+    # Create a Bitly object with authentication
+    s = pyshorteners.Shortener(api_key=bitly_token)
+
+    # Shorten the URL using Bitly
+    shortened_url = s.bitly.short(original_url)
+
+    return shortened_url
